@@ -1,0 +1,13 @@
+{
+  "name": "convertor",
+  "version": "1.0.0",
+  "description": "A file format converter built on Cloudflare Pages",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev ./public --port 8788",
+    "deploy": "wrangler pages deploy ./public --project-name=convertor"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  // Cloudflare Pages 项目配置
+  // 参考文档: https://developers.cloudflare.com/workers/wrangler/configuration/
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+
+  "name": "convertor",
+  "compatibility_date": "2025-07-27",
+
+  // Pages 构建输出目录
+  "pages_build_output_dir": "./public",
+
+  // 本地开发配置
+  "dev": {
+    "port": 8788
+  },
+
+  // 环境变量
+  "vars": {
+    "SITE_NAME": "Convertor"
+  },
+
+  // 路由（如需使用 Workers 模式）
+  // "route": {
+  //   "pattern": "convertor.example.com/*",
+  //   "zone_id": "<YOUR_ZONE_ID>"
+  // },
+
+  // KV 命名空间绑定（如需使用）
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "MY_KV",
+  //     "id": "<KV_NAMESPACE_ID>"
+  //   }
+  // ],
+
+  // R2 存储桶绑定（如需使用）
+  // "r2_buckets": [
+  //   {
+  //     "binding": "MY_BUCKET",
+  //     "bucket_name": "my-bucket"
+  //   }
+  // ],
+
+  // D1 数据库绑定（如需使用）
+  // "d1_databases": [
+  //   {
+  //     "binding": "DB",
+  //     "database_name": "my-db",
+  //     "database_id": "<DATABASE_ID>"
+  //   }
+  // ]
+}

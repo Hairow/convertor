@@ -1,0 +1,5 @@
+/*
+  Cloudflare Pages 路由重定向配置
+*/
+# 示例：
+# /old-page  /new-page  301
