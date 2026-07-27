@@ -52,10 +52,9 @@ async function loadFFmpeg() {
     statusText.textContent = `正在转换... ${pct}%`;
   });
 
-  // 指定 core 文件路径
+  // 从 CDN 加载 ffmpeg core（wasm 超 25MiB，不适合 Pages 静态托管）
   await ffmpeg.load({
-    coreURL: '/lib/ffmpeg/core/ffmpeg-core.js',
-    wasmURL: '/lib/ffmpeg/core/ffmpeg-core.wasm',
+    coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
   });
 
   return ffmpeg;
