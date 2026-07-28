@@ -17,7 +17,7 @@ const resultCard = document.getElementById('resultCard');
 
 // ===== 支持的视频格式 =====
 const VIDEO_EXTENSIONS = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'flv', 'wmv', 'm4v', '3gp'];
-const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024; // 1GB
+const MAX_FILE_SIZE = 3 * 1024 * 1024 * 1024; // 3GB
 
 let selectedFile = null;
 let ffmpeg = null;
@@ -81,7 +81,7 @@ function handleFile(file) {
   }
 
   if (file.size > MAX_FILE_SIZE) {
-    alert(`文件过大：${formatFileSize(file.size)}\n最大支持 1GB`);
+    alert(`文件过大：${formatFileSize(file.size)}\n最大支持 3GB`);
     return;
   }
 
@@ -114,10 +114,18 @@ convertBtn.addEventListener('click', async () => {
 
     // 2. 将视频文件写入虚拟文件系统（块作用域确保 fileBuffer 及时 GC）
     const inputName = 'input.' + getExtension(selectedFile.name);
-    {
+
+    try {
+      console.log('before fileBuffer')
       const fileBuffer = await selectedFile.arrayBuffer();
+      console.log('after fileBuffer')
       await ffmpeg.writeFile(inputName, new Uint8Array(fileBuffer));
+      console.log('after writeFile')
+    } catch (e) {
+      console.error('写入虚拟文件系统失败:', e);
+      throw e;
     }
+
 
 
     // 3. 一步完成：丢弃视频流 + 音频转码 MP3
