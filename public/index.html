@@ -81,6 +81,7 @@
     <p>全程在浏览器本地运行，视频不会上传到任何服务器</p>
   </footer>
 
+  <!-- As @ffmpeg/ffmpeg spawns a web worker, you cannot import @ffmpeg/ffmpeg from CDN like jsdelivr. It is recommended to download it and host it on your server most of the time. -->
   <script src="/lib/ffmpeg/ffmpeg.js"></script>
   <script src="/scripts/app.js"></script>
 </body>
