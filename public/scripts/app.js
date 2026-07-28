@@ -34,6 +34,15 @@ function formatFileSize(bytes) {
   return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + units[i];
 }
 
+// ===== 显示结果卡片 =====
+function showResult(text) {
+  resultCard.replaceChildren();
+  const p = document.createElement('p');
+  p.textContent = text;
+  resultCard.appendChild(p);
+  resultSection.style.display = 'block';
+}
+
 // ===== 加载 ffmpeg.wasm =====
 async function loadFFmpeg() {
   if (ffmpeg && ffmpeg.loaded) return ffmpeg;
@@ -97,10 +106,13 @@ convertBtn.addEventListener('click', async () => {
     const ffmpeg = await loadFFmpeg();
     statusText.textContent = '引擎就绪，开始转换...';
 
-    // 2. 将视频文件写入虚拟文件系统
+    // 2. 将视频文件写入虚拟文件系统（块作用域确保 fileBuffer 及时 GC）
     const inputName = 'input.' + getExtension(selectedFile.name);
-    const inputData = new Uint8Array(await selectedFile.arrayBuffer());
-    await ffmpeg.writeFile(inputName, inputData);
+    {
+      const fileBuffer = await selectedFile.arrayBuffer();
+      await ffmpeg.writeFile(inputName, new Uint8Array(fileBuffer));
+    }
+
 
     // 3. 一步完成：丢弃视频流 + 音频转码 MP3
     //    -vn            去掉视频流，只处理音频
@@ -117,46 +129,39 @@ convertBtn.addEventListener('click', async () => {
       'output.mp3',
     ]);
 
-    // 4. 读取转换结果
-    statusText.textContent = '转换完成，正在打包下载...';
-    const outputData = await ffmpeg.readFile('output.mp3');
+    // 4. 读取转换结果 + 生成下载 blob（块作用域确保 outputData 及时 GC）
+    const outputName = selectedFile.name.replace(/\.[^.]+$/, '') + '.mp3';
+    let blob;
+    {
+      const outputData = await ffmpeg.readFile('output.mp3');
+      blob = new Blob([outputData], { type: 'audio/mpeg' });
+    }
 
-    // 5. 清理临时文件
+    // 5. 清理 ffmpeg 临时文件
     await ffmpeg.deleteFile(inputName);
     await ffmpeg.deleteFile('output.mp3');
 
-    // 6. 生成下载
-    const outputName = selectedFile.name.replace(/\.[^.]+$/, '') + '.mp3';
-    const blob = new Blob([outputData], { type: 'audio/mpeg' });
+    // 6. 直接触发下载
     const url = URL.createObjectURL(blob);
 
     progressFill.style.width = '100%';
     statusSection.style.display = 'none';
 
-    resultCard.innerHTML = `
-      <div class="success-icon">✅</div>
-      <p style="font-weight:600; font-size:1.1rem;">转换成功！</p>
-      <p style="color:#666; font-size:0.85rem; margin:4px 0;">
-        ${selectedFile.name} → ${outputName}
-      </p>
-      <p style="color:#999; font-size:0.8rem; margin-bottom:12px;">
-        文件大小：${formatFileSize(outputData.length)}
-      </p>
-      <a class="download-link" href="${url}" download="${outputName}">
-        ⬇ 下载 MP3
-      </a>
-    `;
-    resultSection.style.display = 'block';
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = outputName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showResult('提取完成，下载已开始');
   } catch (err) {
     console.error('转换失败:', err);
     statusSection.style.display = 'none';
-    resultCard.innerHTML = `
-      <div class="success-icon" style="filter:grayscale(1);">❌</div>
-      <p style="color:#e53e3e;">转换失败</p>
-      <p style="color:#666; font-size:0.85rem; margin-top:4px;">${err.message || '未知错误，请重试'}</p>
-    `;
-    resultSection.style.display = 'block';
+    showResult(err.message || '转换失败，请重试');
   } finally {
+    selectedFile = null;
     convertBtn.disabled = false;
   }
 });
