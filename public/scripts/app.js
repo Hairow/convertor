@@ -63,7 +63,7 @@ async function loadFFmpeg() {
 
   // 从 CDN 加载 ffmpeg core（wasm 超 25MiB，不适合 Pages 静态托管）
   await ffmpeg.load({
-    coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.js',
+    coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
     wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
   });
 
