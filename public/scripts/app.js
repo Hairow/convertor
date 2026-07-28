@@ -17,7 +17,7 @@ const resultCard = document.getElementById('resultCard');
 
 // ===== 支持的视频格式 =====
 const VIDEO_EXTENSIONS = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'flv', 'wmv', 'm4v', '3gp'];
-const MAX_FILE_SIZE = 3 * 1024 * 1024 * 1024; // 3GB
+const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024; // 1GB
 
 let selectedFile = null;
 let ffmpeg = null;
@@ -81,7 +81,7 @@ function handleFile(file) {
   }
 
   if (file.size > MAX_FILE_SIZE) {
-    alert(`文件过大：${formatFileSize(file.size)}\n最大支持 3GB`);
+    alert(`文件过大：${formatFileSize(file.size)}\n最大支持 1GB`);
     return;
   }
 
