@@ -43,13 +43,13 @@ convertor/
 
 ```bash
 # 安装依赖
-npm install
+pnpm install
 
 # 本地启动
-npm run dev
+pnpm run dev
 
 # 部署到 Cloudflare Pages
-npm run deploy
+pnpm run deploy
 ```
 
 本地开发后访问 `http://localhost:8788`。
